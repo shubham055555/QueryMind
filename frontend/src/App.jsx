@@ -29,7 +29,7 @@ import SplineBackground from "./components/SplineBackground";
 // CONFIG
 // ============================================================
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://querymind-production-4b9c.up.railway.app";
 
 
 // ============================================================
@@ -99,6 +99,9 @@ export default function App() {
   const [loading, setLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [pendingClarificationQuestion, setPendingClarificationQuestion] =
+    useState("");
 
   // ----------------------------------------------------------
   // BACKEND
@@ -237,7 +240,7 @@ export default function App() {
         throw new Error("Unable to load history.");
       }
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
       setHistory(
         Array.isArray(result.data)
@@ -280,7 +283,7 @@ export default function App() {
         );
       }
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
       setAnalytics(
         result.data || null
@@ -350,6 +353,8 @@ export default function App() {
     setQuestion("");
 
     setErrorMessage("");
+
+    setPendingClarificationQuestion("");
 
     setSidebarOpen(false);
 
@@ -444,7 +449,7 @@ export default function App() {
 
 
       const result =
-        await response.json();
+        await response.json().catch(() => ({}));
 
 
       if (!response.ok) {
@@ -470,6 +475,8 @@ export default function App() {
         result.status ===
         "clarification_required"
       ) {
+
+        setPendingClarificationQuestion(trimmed);
 
         setMessages(
           (previous) => [
@@ -714,6 +721,8 @@ export default function App() {
             },
           ]
         );
+
+        setPendingClarificationQuestion("");
 
         await loadHistory();
 
@@ -1956,6 +1965,7 @@ export default function App() {
                       }
 
                       originalQuestion={
+                        pendingClarificationQuestion ||
                         messages
                           .filter(
                             (item) =>
