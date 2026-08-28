@@ -7,7 +7,7 @@ from app.api.routes import router
 app = FastAPI(
     title="QueryMind API",
     description="Ambiguity-aware conversational Text-to-SQL API",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 
@@ -18,6 +18,10 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        # Production frontend
+        "https://query-mind-omega.vercel.app",
+
+        # Local development
         "http://localhost:5173",
         "http://localhost:5174",
         "http://127.0.0.1:5173",
@@ -45,7 +49,7 @@ def root():
     return {
         "name": "QueryMind",
         "status": "running",
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
 
 
@@ -56,5 +60,5 @@ def root():
 @app.get("/health")
 def health():
     return {
-        "status": "healthy"
+        "status": "healthy",
     }
