@@ -194,7 +194,7 @@ Ambiguity Detection
 ## Project Structure
 
 QueryMind/
-|
+│
 ├── backend/
 │   ├── app/
 │   │   ├── api/
