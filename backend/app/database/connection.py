@@ -1,15 +1,29 @@
 import os
+
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
+# Load .env for local development
 load_dotenv()
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://querymind:querymind123@localhost:5432/querymind_db"
-)
+# Railway / production + local environment
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL environment variable is not configured."
+    )
+
+# Railway PostgreSQL may provide postgres://
+# SQLAlchemy expects postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql://",
+        1,
+    )
 
 engine = create_engine(
     DATABASE_URL,
-    pool_pre_ping=True
+    pool_pre_ping=True,
 )
